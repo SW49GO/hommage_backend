@@ -28,6 +28,6 @@ exports.getAllUser = (req, res) =>{
             res.status(500).send('Erreur serveur')
             return
         }
-        res.status(200).json({users:result})
+        res.status(200).json({datas:result})
     })
 }

@@ -1,11 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
-const userCtrl = require('../controllers/user')
+const registerCtrl = require('../controllers/registration')
 
-router.put('/signup', userCtrl.signup)
-// router.post('/login', userCtrl.login)
-router.get('/all',userCtrl.getAllUser)
 
+router.put('/register', registerCtrl.setRegister)
+router.put('/addFriend', registerCtrl.setFriends)
 
 module.exports = router
