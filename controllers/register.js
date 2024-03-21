@@ -1,17 +1,20 @@
-const {setQuery, setQueryLastId} = require('../config/connect')
+const {setQuery, getQueryLastId} = require('../config/connect')
 
 // Inscritpion d'un utilisateur dans la BBS + return LastId
 exports.setRegister = (req, res) => {
     // Récupérer les données de la requête
-    const { firsname, lastname, email, password,pseudo,number_road,address,postal_code,city } = req.body
-    console.log(' req.body:',  req.body)
+    const { firstname, lastname, email, password,pseudo,number_road,address,postal_code,city } = req.body
 
     // Requête SQL pour insérer un nouvel utilisateur
-    const sql = 'INSERT INTO users (firsname, lastname, email, password,pseudo,number_road,address,postal_code,city,date_crea, last_log) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), NOW())'
-    const values = [firsname, lastname, email, password,pseudo,number_road,address,postal_code,city]
+    const sql = 'INSERT INTO users (firstname, lastname, email, password,pseudo,number_road,address,postal_code,city,date_crea, last_log) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), NOW())'
+    const values = [firstname, lastname, email, password,pseudo,number_road,address,postal_code,city]
 
     // Exécuter la requête SQL
-    setQueryLastId(sql, values, res)
+    getQueryLastId(sql, values, res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
 }
 
 // Inscription d'un nouvel ami'
@@ -24,10 +27,14 @@ exports.setFriends = (req,res)=>{
 
 // Inscription d'un defunt + return LastId
 exports.setDefunct = (req,res)=>{
-    const {firsname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo} = req.body
+    const {firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo} = req.body
     const sql = 'INSERT INTO defuncts (firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo,date_crea) VALUES (?,?,?,?,?,?,?,?,?,?,NOW())'
-    const values = [firsname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo]
-    setQueryLastId(sql,values,res)
+    const values = [firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo]
+    getQueryLastId(sql, values, res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
 }
 
 // Inscription d'un administrateur utilisateur de fiche défunt
@@ -51,7 +58,11 @@ exports.setPhoto = (req,res)=>{
     const {user_id,defunct_id,name} = req.body
     const sql = 'INSERT INTO photos (user_id,defunct_id,name,date_crea) VALUES (?,?,?,NOW())'
     const values = [user_id,defunct_id,name]
-    setQueryLastId(sql,values,res)
+    getQueryLastId(sql, values, res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
 }
 
 // Enregistrement d'un commentaire
@@ -59,23 +70,34 @@ exports.setComment = (req,res) =>{
     const {comment,user_id,defunct_id,photo_id} = req.body
     const sql = 'INSERT INTO comments (comment,user_id,defunct_id,photo_id,date_crea) VALUES (?,?,?,NOW())'
     const values = [comment,user_id,defunct_id,photo_id]
-    setQueryLastId(sql,values,res)
+    getQueryLastId(sql, values, res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
 }
-
 //Enregistrement du contenu d'une carte
 exports.setContent = (req,res) =>{
     const {content,user_id,card_id} = req.body
     const sql = 'INSERT INTO content_card (content,user_id,card_id,date,crea) VALUES (?,?,?,NOW())'
     const values = [content,user_id,card_id]
-    setQueryLastId(sql,values,res)
+    getQueryLastId(sql, values, res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
 }
 
 // Enregistrement des cartes achetées
 exports.setOrders = (req,res) =>{
-    const {user_id,lastname,firsname,lastname_send,email,cards_id,flowers_id,total,user_send_id,tel} = req.body
+    const {user_id,lastname,firstname,lastname_send,email,cards_id,flowers_id,total,user_send_id,tel} = req.body
     const sql = 'INSERT INTO orders (user_id,lastname,firstname,lastname_send,email,cards_id,flowers_id,total,user_send_id,tel,date_crea) VALUES (?,?,?,?,?,?,?,?,?,NOW())'
-    const values = [user_id,lastname,firsname,lastname_send,email,cards_id,flowers_id,total,user_send_id,tel]
-    setQueryLastId(sql,values,res)
+    const values = [user_id,lastname,firstname,lastname_send,email,cards_id,flowers_id,total,user_send_id,tel]
+    getQueryLastId(sql, values, res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
 }
 
 // Enregistrement des messages du chat

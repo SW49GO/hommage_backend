@@ -4,6 +4,7 @@ const router = express.Router()
 const registerCtrl = require('../controllers/register')
 const updaterCtrl = require('../controllers/updater')
 const deleterCtrl = require('../controllers/deleter')
+const getInfosCtrl = require('../controllers/getInfos')
 
 /**
  * Function to select and execute the right controller for each routes
@@ -26,5 +27,6 @@ function executeController(ctrlObj) {
 router.put('/register/:controller', executeController(registerCtrl))
 router.post('/updater/:controller', executeController(updaterCtrl))
 router.post('/deleter/:controller', executeController(deleterCtrl))
+router.get('/getInfos/:controller', executeController(getInfosCtrl))
 
 module.exports = router

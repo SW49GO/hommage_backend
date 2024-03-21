@@ -1,5 +1,4 @@
-const mysql = require('mysql');
-const { connect } = require('../routes/user');
+const mysql = require('mysql')
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -26,20 +25,36 @@ function handleResponse(res, status, message) {
 }
 
 // Fonction générique pour exécuter une requête et renvoyer le résultat
-function setQueryLastId(sql, values, res) {
-    // Exécuter la requête SQL
-    executeQuery(sql, values, (err, result) => {
-        if (err) {
-            console.error('Erreur lors de l\'exécution de la requête SQL :', err)
-            return handleResponse(res, 500, 'Erreur serveur')
-        }
-        console.log('Succès')
-        // Récupérer le lastId
-        const lastId = result.insertId;
-        return handleResponse(res, 200, { userId: lastId })
+function getQuery(sql, values, res) {
+    return new Promise((resolve, reject) => {
+        executeQuery(sql, values, (err, result) => {
+            if (err) {
+                console.error('Erreur lors de l\'exécution de la requête SQL :', err)
+                handleResponse(res, 500, 'Erreur serveur')
+                reject(err)
+            } else {
+                console.log('Succès')
+                resolve(result)
+            }
+        })
     })
 }
 
+function getQueryLastId(sql, values, res) {
+    return new Promise((resolve, reject) => {
+        executeQuery(sql, values, (err, result) => {
+            if (err) {
+                console.error('Erreur lors de l\'exécution de la requête SQL :', err)
+                handleResponse(res, 500, 'Erreur serveur')
+                reject(err)
+            } else {
+                console.log('Succès')
+                const lastId = result.insertId
+                resolve(lastId)
+            }
+        })
+    })
+}
 function setQuery(sql, values, res) {
     // Exécuter la requête SQL
     executeQuery(sql, values, (err, result) => {
@@ -53,4 +68,4 @@ function setQuery(sql, values, res) {
 }
 
 
-module.exports = {setQueryLastId, setQuery}
+module.exports = {getQuery, getQueryLastId, setQuery}
