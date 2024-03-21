@@ -2,19 +2,29 @@ const express = require('express')
 const router = express.Router()
 
 const registerCtrl = require('../controllers/register')
+const updaterCtrl = require('../controllers/updater')
+const deleterCtrl = require('../controllers/deleter')
 
-router.put('/register/:controller', (req, res) => {
-    const { controller } = req.params
-    const params = req.body
+/**
+ * Function to select and execute the right controller for each routes
+ * @param {object} ctrlObj 
+ * @returns response BDD
+ */
+function executeController(ctrlObj) {
+    return function(req, res) {
+        const { controller } = req.params
+        const params = req.body
+        const chosenController = ctrlObj[controller]
 
-    // Vérifie si le contrôleur existe
-    const chosenController = registerCtrl[controller];
-    if (!chosenController || typeof chosenController !== 'function') {
-        return res.status(400).json({ message: 'Contrôleur invalide' });
+        if (!chosenController || typeof chosenController !== 'function') {
+            return res.status(400).json({ message: 'Contrôleur invalide' })
+        }
+        chosenController(req, res, params)
     }
+}
 
-    // Appel le contrôleur 
-    chosenController(req, res, params)
-})
+router.put('/register/:controller', executeController(registerCtrl))
+router.post('/updater/:controller', executeController(updaterCtrl))
+router.post('/deleter/:controller', executeController(deleterCtrl))
 
 module.exports = router

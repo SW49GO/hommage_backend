@@ -50,6 +50,7 @@ exports.setContact = (req,res)=>{
 exports.setPhoto = (req,res)=>{
     const {user_id,defunct_id,name} = req.body
     const sql = 'INSERT INTO photos (user_id,defunct_id,name,date_crea) VALUES (?,?,?,NOW())'
+    const values = [user_id,defunct_id,name]
     setQueryLastId(sql,values,res)
 }
 
@@ -63,9 +64,9 @@ exports.setComment = (req,res) =>{
 
 //Enregistrement du contenu d'une carte
 exports.setContent = (req,res) =>{
-    const {content,user_id_card_id} = req.body
-    const sql = 'INSERT INTO content_card (content,user_id_card_id,date,crea) VALUES (?,?,?,NOW())'
-    const values = [content,user_id_card_id]
+    const {content,user_id,card_id} = req.body
+    const sql = 'INSERT INTO content_card (content,user_id,card_id,date,crea) VALUES (?,?,?,NOW())'
+    const values = [content,user_id,card_id]
     setQueryLastId(sql,values,res)
 }
 
