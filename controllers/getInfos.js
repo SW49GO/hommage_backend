@@ -122,15 +122,6 @@ exports.photoDefByUser= (req,res) =>{
 }
 
 // Affichage de la photo miniature d'un defunt
-// public function getPhotoDef(int $def_id):string {
-//     $data = ['id'=>$def_id];
-//     $query = "SELECT user_id, photo FROM defuncts WHERE id=:id";
-//     $result = $this->getQuery($query,$data)->fetch();
-//     if($result['photo']) {
-//         return 'public/pictures/users/'.$result['user_id'].'/'.$result['photo'];
-//     }
-//         return 'public/pictures/site/noone.jpg';
-// }  
 exports.getPhotoDef = (req,res) =>{
     const {id} = req.body
     const sql = 'SELECT user_id, photo FROM defuncts WHERE id=?'
@@ -144,6 +135,250 @@ exports.getPhotoDef = (req,res) =>{
         }
         res.json({pathPhoto})
     })
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Récupération de l'Id d'un defunt lié à une photo
+exports.getIdDefPhoto = (req,res) =>{
+    const {name}= req.body
+    const sql = 'SELECT defunct_id FROM photos WHERE name=?'
+    getQuery(sql,[name],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Liste des cartes ou bouquets de fleurs
+exports.getProductsList = (req,res) =>{
+    const {categories} = req.body
+    const sql = 'SELECT id, name, price, info FROM products WHERE categories=?'
+    getQuery(sql,[categories],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// // Information récupérée pour le tableau des cartes et les Id des cartes
+// public function getCardTab():string {
+//     $tab = '';
+//     if(isset($_SESSION['nbCard']) && !empty($_SESSION['nbCard'])) {
+//         foreach($_SESSION['nbCard'] as $c) {
+//             $id_card = $this->getOrderCardId($c);
+//             $cardInfo = $this->getProductInfo($id_card);
+//             $tab .= '<tr><td>'.$cardInfo['info'].'</td><td>'.$cardInfo['price'].'€</td></tr>';
+//         }
+//     }
+//     return $tab;
+// }
+
+// Récupération de l'Id d'une carte lié à un texte
+exports.getOrderCardId= (req,res) =>{
+    const {id}= req.body
+    const sql = 'SELECT card_id FROM content_card WHERE id=?'
+    getQuery(sql,[id],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// // Calcul du total du prix des cartes
+// public function getCardTotal() {
+//     $total = 0;
+//     if(isset($_SESSION['nbCard']) && !empty($_SESSION['nbCard'])) {
+//         foreach($_SESSION['nbCard'] as $c) {
+//             $id_card = $this->getOrderCardId($c);
+//             $cardInfo = $this->getProductInfo($id_card);
+//             $total += $cardInfo['price'];
+//         }
+//     }
+//     return $total;
+// }
+// exports.getCardTotal = (req,res) =>{
+
+// }
+
+// Récupération de la liste des information d'une carte
+exports.getProductInfo = (req,res) =>{
+    const {id}= req.body
+    const sql = 'SELECT id, name, price, info FROM products WHERE id=?'
+    getQuery(sql,[id],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Liste des achats d'un utilisateur
+exports.getOrdersList= (req,res) =>{
+    const {user_id} =req.body
+    const sql = 'SELECT date_crea, total, user_send_id, lastname_send, cards_id, flowers_id FROM orders WHERE user_id=?'
+    getQuery(sql,[user_id],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Liste des contenus de cartes par Id d'enregistrement 
+exports.getContentList = (req,res) =>{
+    const {id} = req.body
+    const sql = 'SELECT user_id, content, card_id, date_crea, user_send_id FROM content_card WHERE id=?'
+    getQuery(sql,[id],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Liste des achats par utilisateur
+exports.getListBuyUser = (req,res) =>{
+    const {id} = req.body
+    const sql = 'SELECT date_crea, total, user_send_id, lastname_send, cards_id, flowers_id FROM orders WHERE user_id=?'
+    let cards = []
+    getQuery(sql,[id],res)
+    .then(result => { 
+        if (result.length > 0) {
+            let cards = []
+            result.forEach(row => {
+                let listcards = JSON.parse(row.cards_id)
+                cards.push({ idcards: listcards })
+            });
+            res.json({ cards })
+        } else {
+            res.json({ cards: [] })
+        }
+    })
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Récupération des 10 dernières photos pour le slider
+exports.getHomeSlider = (req,res)=>{
+    sql = 'SELECT MAX(user_id) as user_id, MAX(name) as name FROM photos GROUP BY defunct_id ORDER BY MAX(id) LIMIT 10'
+    getQuery(sql,[],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Récupération des nouvelles photos ajoutées depuis la dernière connexion
+exports.getRecentPhotos = (req,res) =>{
+    const {defunct_id,last_log,user_id} = req.body
+    const sql = 'SELECT id FROM photos WHERE defunct_id=? AND date_crea >? AND user_id!=?'
+    values = [defunct_id,last_log,user_id]
+    getQuery(sql,values,res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Récupération des nouveaux commentaires depuis la dernière connexion
+exports.getRecentComments = (req,res) =>{
+    const {defunct_id,last_log,user_id}= req.body
+    const sql = 'SELECT id FROM comments WHERE defunct_id=? AND date_crea >? AND user_id!=?'
+    values = [defunct_id,last_log,user_id]
+    getQuery(sql,values,res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Récupération des infos d'un useradmin selon l'ID du défunt
+exports.getUserAdminInfo = (req,res) =>{
+    const {defunct_id} =req.body
+    sql = 'SELECT user_id FROM user_admin WHERE defunct_id=?'
+    getQuery(sql,[defunct_id],res)
+    .then(result => { 
+        if (result.length > 0) {
+            const user_id = result[0].user_id
+            const sqlUserInfo = 'SELECT * FROM users WHERE user_id=?'
+            getQuery(sqlUserInfo, [user_id], res)
+            .then(userAdmin => {
+                const admin = userAdmin.length > 0 ? userAdmin[0] : null
+                res.json({ user_id, admin })
+            })
+            .catch(err => {
+                res.status(500).json({ message: err })
+            });
+        } else {
+            res.json({ user_id: null, admin: null })
+        }
+    })
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Récupération des infos admin selon  un défunt
+exports.getAdminDefunct = (req,res) =>{
+    const {defunct_id} = req.body
+    const sql = 'SELECT user_id, card_real, card_virtuel FROM user_admin WHERE defunct_id=?'
+    getQuery(sql,[defunct_id],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Liste des amis enregistrée
+exports.getFriendsList = (req,res) =>{
+    const {user_id}= req.body
+    const sql = 'SELECT friend_id, user_id, date_crea, validate FROM friends WHERE user_id=? OR friend_id=?'
+    getQuery(sql,[user_id, user_id],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Liste des demande d'amis depuis la dernière connexion avec jointure pour ses informations
+exports.getAskFriend = (req,res) =>{
+    const {id}= req.body
+    const sql = 'SELECT last_log FROM users WHERE id=?'
+    getQuery(sql,[id],res)
+    .then(result => { 
+        if(result.length>0){
+            const last_log = result[0].last_log
+            const sql = 'SELECT user_id, validate, users.lastname, users.firstname FROM friends INNER JOIN users ON users.id=friends.user_id WHERE friend_id=? AND friends.date_crea < ?'
+            getQuery(sql,[id,last_log],res)
+            .then(result2 => { res.json({ result2 })})
+            .catch(err => {
+                res.status(500).json({message:err})
+            })
+        }
+    })
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Récupération des 30 derniers messages pour le tchat
+exports.getTchat = (req,res) =>{
+    const {friend_id,user_id} = req.body
+    sql = 'SELECT user_id, date_crea, content ,friend_id FROM tchat WHERE (friend_id=? AND user_id=?) OR (friend_id=? AND user_id=?) ORDER BY id DESC LIMIT 30'
+    values = [friend_id,user_id,user_id,friend_id]
+    getQuery(sql,values,res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+
+// Nombre de message depuis la dernière connexion
+exports.getNewTchat = (req,res) =>{
+    const {user_id} = req.body
+    const sql = 'SELECT user_id FROM tchat WHERE friend_id=? AND `read` = 0 GROUP BY user_id'
+    getQuery(sql,[user_id],res)
+    .then(result => { res.json({ result })})
     .catch(err => {
         res.status(500).json({message:err})
     })
