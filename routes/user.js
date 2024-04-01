@@ -6,6 +6,8 @@ const updaterCtrl = require('../controllers/updater')
 const deleterCtrl = require('../controllers/deleter')
 const getInfosCtrl = require('../controllers/getInfos')
 
+const multer = require('../middlewares/multer-config')
+
 /**
  * Function to select and execute the right controller for each routes
  * @param {object} ctrlObj 
@@ -25,8 +27,10 @@ function executeController(ctrlObj) {
 }
 
 router.put('/register/:controller', executeController(registerCtrl))
+router.put('/registerFile',multer)
+
 router.post('/updater/:controller', executeController(updaterCtrl))
 router.post('/deleter/:controller', executeController(deleterCtrl))
-router.get('/getInfos/:controller', executeController(getInfosCtrl))
+router.post('/getInfos/:controller', executeController(getInfosCtrl))
 
 module.exports = router

@@ -1,4 +1,5 @@
 const {setQuery, getQueryLastId} = require('../config/connect')
+const fs = require('fs')
 
 // Inscritpion d'un utilisateur dans la BBS + return LastId
 exports.setRegister = (req, res) => {
@@ -106,4 +107,8 @@ exports.setTchat = (req,res) =>{
     const sql = 'INSERT INTO tchat (user_id,friend_id,content,date_crea) VALUES (?,?,?,NOW())'
     const values = [user_id,friend_id,content]
     setQuery(sql,values,res)
+}
+
+exports.setPhotoProfil = (req, res) =>{
+
 }

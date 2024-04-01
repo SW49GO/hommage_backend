@@ -5,10 +5,10 @@ exports.getUserData = (req, res) => {
     const sql1 = 'SELECT id, email, firstname, lastname, number_road, address, city, postal_code, pseudo FROM users WHERE id=?'
     const sql2 = 'SELECT affinity, add_share, email_share, card_real, card_virtuel, flower, new_user FROM user_admin WHERE user_id=?'
   
-    getQuery(sql1, [id], res)
+    getQuery(sql1,[id], res)
     .then(result => {
         let userData = result
-        getQuery(sql2,[id], res)
+        getQuery(sql2, [id], res)
         .then(result2=>{
             result2.forEach(item => {
                 userData.push(item)
