@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const userRoutes = require('./routes/user')
 const app = express()
 
@@ -11,7 +12,10 @@ app.use((req, res, next) => {
     next()
   })
 app.use('/api/user', userRoutes)
-
+app.use('/images', userRoutes)
 app.use('/images', express.static(path.join(__dirname,'images')))
+app.options('/images/registerFile', (req, res) => {
+  res.status(200).end()
+})
 
 module.exports = app
