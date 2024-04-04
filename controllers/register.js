@@ -55,7 +55,7 @@ exports.setContact = (req,res)=>{
 }
 
 // Enregistrement d'un photo de defunt
-exports.setPhoto = (req,res)=>{
+exports.setPhotoDef = (req,res)=>{
     const {user_id,defunct_id,name} = req.body
     const sql = 'INSERT INTO photos (user_id,defunct_id,name,date_crea) VALUES (?,?,?,NOW())'
     const values = [user_id,defunct_id,name]
@@ -107,8 +107,4 @@ exports.setTchat = (req,res) =>{
     const sql = 'INSERT INTO tchat (user_id,friend_id,content,date_crea) VALUES (?,?,?,NOW())'
     const values = [user_id,friend_id,content]
     setQuery(sql,values,res)
-}
-
-exports.setPhotoProfil = (req, res) =>{
-
 }

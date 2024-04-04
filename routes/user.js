@@ -6,7 +6,7 @@ const updaterCtrl = require('../controllers/updater')
 const deleterCtrl = require('../controllers/deleter')
 const getInfosCtrl = require('../controllers/getInfos')
 
-const upload = require('../middlewares/multer-config')
+const multer = require('../middlewares/multer-config')
 
 /**
  * Function to select and execute the right controller for each routes
@@ -27,7 +27,9 @@ function executeController(ctrlObj) {
 }
 
 router.put('/register/:controller', executeController(registerCtrl))
-router.post('/registerFile', upload, (req,res)=>{
+
+router.post('/registerFile', multer, (req,res)=>{
+    console.log('body',req.body)
     if (req.file) {
         console.log('File uploaded:', req.file.filename)
     } else {

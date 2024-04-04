@@ -12,9 +12,8 @@ app.use((req, res, next) => {
     next()
   })
 app.use('/api/user', userRoutes)
-app.use('/images', userRoutes)
-app.use('/images', express.static(path.join(__dirname,'images')))
-app.options('/images/registerFile', (req, res) => {
+app.use('/api/user', express.static(path.join(__dirname,'images')))
+app.options('/registerFile', (req, res) => {
   res.status(200).end()
 })
 
