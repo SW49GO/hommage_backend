@@ -5,8 +5,11 @@ const registerCtrl = require('../controllers/register')
 const updaterCtrl = require('../controllers/updater')
 const deleterCtrl = require('../controllers/deleter')
 const getInfosCtrl = require('../controllers/getInfos')
+const globalCtrl = require('../controllers/globalRequest')
 
 const multer = require('../middlewares/multer-config')
+
+const auth = require('../middlewares/auth')
 
 /**
  * Function to select and execute the right controller for each routes
@@ -26,9 +29,9 @@ function executeController(ctrlObj) {
     }
 }
 
-router.put('/register/:controller', executeController(registerCtrl))
+router.put('/register/:controller', auth, executeController(registerCtrl))
 
-router.post('/registerFile', multer, (req,res)=>{
+router.post('/registerFile',auth,  multer, (req,res)=>{
     console.log('body',req.body)
     if (req.file) {
         console.log('File uploaded:', req.file.filename)
@@ -38,8 +41,10 @@ router.post('/registerFile', multer, (req,res)=>{
     res.sendStatus(200)
 })
 
-router.post('/updater/:controller', executeController(updaterCtrl))
-router.post('/deleter/:controller', executeController(deleterCtrl))
-router.post('/getInfos/:controller', executeController(getInfosCtrl))
+router.post('/updater/:controller', auth, executeController(updaterCtrl))
+router.post('/deleter/:controller', auth, executeController(deleterCtrl))
+router.post('/getInfos/:controller', auth, executeController(getInfosCtrl))
+router.post('/signIn/:controller', executeController(registerCtrl))
+router.post('/connect/:controller',executeController(globalCtrl))
 
 module.exports = router

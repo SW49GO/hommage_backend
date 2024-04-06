@@ -1,20 +1,25 @@
 const {setQuery, getQueryLastId} = require('../config/connect')
 const fs = require('fs')
+const bcrypt = require('bcrypt')
+
 
 // Inscritpion d'un utilisateur dans la BBS + return LastId
 exports.setRegister = (req, res) => {
-    // Récupérer les données de la requête
-    const { firstname, lastname, email, password,pseudo,number_road,address,postal_code,city } = req.body
+ // Récupérer les données de la requête
+    let { firstname, lastname, email, password,pseudo,number_road,address,postal_code,city } = req.body
 
-    // Requête SQL pour insérer un nouvel utilisateur
-    const sql = 'INSERT INTO users (firstname, lastname, email, password,pseudo,number_road,address,postal_code,city,date_crea, last_log) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), NOW())'
-    const values = [firstname, lastname, email, password,pseudo,number_road,address,postal_code,city]
-
-    // Exécuter la requête SQL
-    getQueryLastId(sql, values, res)
-    .then(result => { res.json({ result })})
-    .catch(err => {
-        res.status(500).json({message:err})
+    bcrypt.hash(password, 10, function(err, hash) {
+        console.log('hash:', hash)
+        const token = hash
+         // Requête SQL pour insérer un nouvel utilisateur
+        const sql = 'INSERT INTO users (firstname, lastname, email, password,pseudo,number_road,address,postal_code,city,date_crea, last_log) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), NOW())'
+        const values = [firstname, lastname, email, token, pseudo,number_road,address,postal_code,city]
+         // Exécuter la requête SQL
+        getQueryLastId(sql, values, res)
+        .then(result => { res.json({ result, token })})
+        .catch(err => {
+            res.status(500).json({message:err})
+        })
     })
 }
 
