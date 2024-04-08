@@ -6,10 +6,10 @@ const updaterCtrl = require('../controllers/updater')
 const deleterCtrl = require('../controllers/deleter')
 const getInfosCtrl = require('../controllers/getInfos')
 const globalCtrl = require('../controllers/globalRequest')
-
+const auth = require('../middlewares/auth')
 const multer = require('../middlewares/multer-config')
 
-const auth = require('../middlewares/auth')
+
 
 /**
  * Function to select and execute the right controller for each routes
@@ -31,10 +31,12 @@ function executeController(ctrlObj) {
 
 router.put('/register/:controller', auth, executeController(registerCtrl))
 
-router.post('/registerFile',auth,  multer, (req,res)=>{
-    console.log('body',req.body)
+router.post('/registerFile', multer, (req,res)=>{
+    console.log('bodyrequete',req.body)
     if (req.file) {
+        console.log('req.file:', req.file)
         console.log('File uploaded:', req.file.filename)
+        console.log('Path uploaded:', req.file.path)
     } else {
         console.log('No file uploaded')
     }

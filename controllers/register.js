@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt')
 exports.setRegister = (req, res) => {
  // Récupérer les données de la requête
     let { firstname, lastname, email, password,pseudo,number_road,address,postal_code,city } = req.body
-
+    console.log(req.body)
     bcrypt.hash(password, 10, function(err, hash) {
         console.log('hash:', hash)
         const token = hash
