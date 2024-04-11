@@ -1,5 +1,5 @@
 const {setQuery, setQueryLastId} = require('../config/connect')
-
+const fs = require('fs')
 // Supprimer un commentaire
 exports.deleteComment = (req,res) =>{
     const {id} = req.body
@@ -46,9 +46,89 @@ exports.deleteUserAccount = (req,res) =>{
     const sql = 'DELETE FROM users WHERE id=?'
     setQuery(sql,[id],res)
 }
-/*
-// supprimer une fiche d'un défunt et sa photo de profil
-    public function deleteOneDefunct(int $defunct, int $user_id) :void{
+
+// Supprimer une fiche d'un défunt et sa photo de profil
+exports.deleteOneDefunct = (req,res) =>{
+    const {id, idDef} = req.body
+    console.log('req.body:', req.body)
+    const filePath = `./images/photos/${idDef}`
+    // Access to folder
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err && err.code === 'ENOENT') {
+          console.error('Le dossier n\'existe pas.')
+          return
+        }
+        fs.readdir(filePath, (err, files) => {
+            if (err) {
+              console.error('Erreur lors de la lecture du répertoire :', err)
+              return
+            }
+            // Check if there is files start with the user id
+            const filesStartingWithOne = files.filter(file => file.startsWith(id))
+            console.log('filesStartingWithOne:', filesStartingWithOne)
+           
+            if (filesStartingWithOne) { 
+                if(files.length > filesStartingWithOne.length){
+                    console.log('suppr')
+                    filesStartingWithOne.forEach((file) => {
+                        const fileToDelete = `${filePath}/${file}`
+                        console.log('fileToDelete:', fileToDelete)
+                        fs.unlink(fileToDelete, (err) => {
+                            if (err) {
+                                console.error('Erreur lors de la suppression du fichier :', err)
+                                return
+                            }
+                            console.log(`Le fichier ${fileToDelete} a été supprimé avec succès.`)
+                        })
+                    })
+                }else{
+                    filesStartingWithOne.forEach((file) => {
+                        const fileToDelete = `${filePath}/${file}`
+                        console.log('fileToDelete:', fileToDelete)
+                        fs.unlink(fileToDelete, (err) => {
+                            if (err) {
+                                console.error('Erreur lors de la suppression du fichier :', err)
+                                return
+                            }
+                            console.log(`Le fichier ${fileToDelete} a été supprimé avec succès.`)
+                        })
+                    })
+                    // Delete the empty folder
+                    fs.rmdir(filePath, (err) => {
+                        if (err) {
+                            console.error('Erreur lors de la suppression du dossier :', err)
+                            return
+                        }
+                        console.log(`Le dossier a été supprimé avec succès.`)
+                    })
+                    // Delete the photo profil
+                    const photoDefProfil = `./images/users/${id}/photodef${idDef}.jpeg`
+                    fs.unlink(photoDefProfil, (err) =>{
+                        if (err) {
+                            console.error('Erreur lors de la suppression du fichier :', err)
+                            return
+                        }
+                        console.log(`Le fichier a été supprimé avec succès.`)
+                    })
+                }
+            } else {
+              console.log('Aucun fichier trouvé')
+            }
+          })
+    
+    })
+    
+        // // Supprimer le fichier s'il existe
+        // fs.unlink(filePath, (err) => {
+        //   if (err) {
+        //     console.error('Erreur lors de la suppression du fichier :', err);
+        //     return;
+        //   }
+        //   console.log('Le fichier a été supprimé avec succès.');
+        // })
+    
+}
+   /* public function deleteOneDefunct(int $defunct, int $user_id) :void{
         $folder = 'public/pictures/users/'.$user_id;
             if (is_dir($folder)){
                 unlink ($folder.'/photodef'.$defunct.'.jpg');

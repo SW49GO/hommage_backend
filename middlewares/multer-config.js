@@ -38,12 +38,15 @@ const storage = multer.diskStorage({
       })
     }else if(dest==='defProfil'){
       uploadPath = `images/users/${id}`
+      callback(null, uploadPath)
     }
     console.log('uploadPath:', uploadPath)
-
   },
   filename: (req, file, callback) => {
+    console.log('filnameINSIDE')
+    console.log('file:', file)
     const {id, dest, defId}=req.body
+    console.log('dest:', dest)
     const extension = MIME_TYPES[file.mimetype]
     if (dest==='def') {
       const uploadPath = `images/photos/${defId}`

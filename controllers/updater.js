@@ -10,7 +10,7 @@ exports.updateLastLogin = (req,res) =>{
 
 // Mise à jour du nom de la photo de defunt
 exports.updatePhoto = (req,res) =>{
-    const {name,id} = req.body
+    const {name, id} = req.body
     const sql = 'UPDATE photos SET name = ? WHERE id = ?'
     const values = [name,id]
     setQuery(sql,values,res)
@@ -71,7 +71,7 @@ exports.updateNewAdminDefunct = (req,res) =>{
 
 // Mise à jour des informations d'un défunt
 exports.updateInfosDefunct = (req,res) =>{
-    const {lastname,firstname,birthdate,death_date,cemetery,city_birth,city_death,postal_code,id}= req.body
+    const {lastname,firstname,birthdate,death_date,cemetery,city_birth,city_death,postal_code,id}= req.body.data
     const sql = 'UPDATE defuncts SET lastname=?, firstname=?, birthdate=?, death_date=?, cemetery=?, city_birth=?, city_death=?, postal_code=? WHERE id=?'
     const values = [lastname,firstname,birthdate,death_date,cemetery,city_birth,city_death,postal_code,id]
     setQuery(sql,values,res)
@@ -79,9 +79,10 @@ exports.updateInfosDefunct = (req,res) =>{
 
 // Enregistrement photo de profil du defunt
 exports.updateDefPhoto = (req,res) =>{
-    const {photo,id} = req.body
+    const {photo, idDef} = req.body
+    console.log('req.body:', req.body)
     const sql = 'UPDATE defuncts SET photo=? WHERE id=?'
-    const values = [photo,id]
+    const values = [photo,idDef]
     setQuery(sql,values,res)
 }
 
@@ -98,5 +99,14 @@ exports.updateContentCard = (req,res) =>{
     const {user_send_id,id}= req.body
     const sql = 'UPDATE content_card SET user_send_id=? WHERE id=?'
     const values = [user_send_id,id]
+    setQuery(sql,values,res)
+}
+
+// Mise à jour de la photo de Profil
+exports.updatePhotoProfil = (req,res) =>{
+    console.log('req:', req)
+    const {id, photo} = req.body
+    const sql = 'UPDATE users SET photo=? WHERE id=?'
+    const values = [photo, id]
     setQuery(sql,values,res)
 }

@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const registerCtrl = require('../controllers/register')
+console.log('registerCtrl:', registerCtrl)
 const updaterCtrl = require('../controllers/updater')
 const deleterCtrl = require('../controllers/deleter')
 const getInfosCtrl = require('../controllers/getInfos')
@@ -31,12 +32,13 @@ function executeController(ctrlObj) {
 
 router.put('/register/:controller', auth, executeController(registerCtrl))
 
-router.post('/registerFile', multer, (req,res)=>{
-    console.log('bodyrequete',req.body)
+router.post('/registerFile', multer,(req,res)=>{
+    console.log('bodyrequete',req.file)
     if (req.file) {
-        console.log('req.file:', req.file)
-        console.log('File uploaded:', req.file.filename)
-        console.log('Path uploaded:', req.file.path)
+        res.status(200).json({
+            filename: req.file.filename,
+            path: req.file.path
+        })
     } else {
         console.log('No file uploaded')
     }

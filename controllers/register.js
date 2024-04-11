@@ -33,9 +33,11 @@ exports.setFriends = (req,res)=>{
 
 // Inscription d'un defunt + return LastId
 exports.setDefunct = (req,res)=>{
-    const {firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo} = req.body
-    const sql = 'INSERT INTO defuncts (firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo,date_crea) VALUES (?,?,?,?,?,?,?,?,?,?,NOW())'
-    const values = [firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,photo]
+    console.log('defunct')
+    console.log('req:', req.body.data)
+    const {firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id} = req.body.data
+    const sql = 'INSERT INTO defuncts (firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id,date_crea) VALUES (?,?,?,?,?,?,?,?,?,NOW())'
+    const values = [firstname, lastname, birthdate, death_date,cemetery,city_birth,city_death,postal_code,user_id]
     getQueryLastId(sql, values, res)
     .then(result => { res.json({ result })})
     .catch(err => {

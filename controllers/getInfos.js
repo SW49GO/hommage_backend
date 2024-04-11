@@ -2,7 +2,7 @@ const {getQuery} = require('../config/connect')
 
 exports.getUserData = (req, res) => {
     const { id } = req.body
-    const sql1 = 'SELECT id, email, firstname, lastname, number_road, address, city, postal_code, pseudo FROM users WHERE id=?'
+    const sql1 = 'SELECT id, email, firstname, lastname, number_road, address, city, postal_code, pseudo, photo FROM users WHERE id=?'
     const sql2 = 'SELECT affinity, add_share, email_share, card_real, card_virtuel, flower, new_user FROM user_admin WHERE user_id=?'
   
     getQuery(sql1,[id], res)
@@ -38,9 +38,9 @@ exports.getEmail = (req,res) =>{
 
 // Récupération les infos de tout les défunts d'un utilisateur
 exports.getUserDefunctList = (req,res) =>{
-    const {user_id} = req.body
-    const sql = 'SELECT id, lastname, firstname, birthdate, death_date, cemetery, city_birth, postal_code FROM defuncts WHERE user_id=?'
-    getQuery(sql,[user_id],res)
+    const {id} = req.body
+    const sql = 'SELECT id, lastname, firstname, birthdate, death_date, cemetery, city_birth, city_death, postal_code, photo FROM defuncts WHERE user_id=?'
+    getQuery(sql,[id],res)
     .then(result => { res.json({ result })})
     .catch(err => {
         res.status(500).json({message:err})
@@ -48,9 +48,9 @@ exports.getUserDefunctList = (req,res) =>{
 }
 // Récupération toutes les infos d'un défunt selon son Id
 exports.getInfoDefunct = (req,res) =>{
-    const {id} = req.body
-    const sql = 'SELECT id, lastname, firstname, birthdate, death_date, cemetery, city_birth, city_death, postal_code, user_id FROM defuncts WHERE id=?'
-    getQuery(sql,[id],res)
+    const {idDef} = req.body
+    const sql = 'SELECT id, lastname, firstname, birthdate, death_date, cemetery, city_birth, city_death, postal_code, user_id, photo FROM defuncts WHERE id=?'
+    getQuery(sql,[idDef],res)
     .then(result => { res.json({ result })})
     .catch(err => {
         res.status(500).json({message:err})
@@ -350,7 +350,7 @@ exports.getAskFriend = (req,res) =>{
             const last_log = result[0].last_log
             const sql = 'SELECT user_id, validate, users.lastname, users.firstname FROM friends INNER JOIN users ON users.id=friends.user_id WHERE friend_id=? AND friends.date_crea < ?'
             getQuery(sql,[id,last_log],res)
-            .then(result2 => { res.json({ result2 })})
+            .then(friends => { res.json({ friends })})
             .catch(err => {
                 res.status(500).json({message:err})
             })
