@@ -33,7 +33,7 @@ function getQuery(sql, values, res) {
                 handleResponse(res, 500, 'Erreur serveur')
                 reject(err)
             } else {
-                console.log('Succès')
+                console.log('Succès get')
                 resolve(result)
             }
         })
@@ -48,7 +48,7 @@ function getQueryLastId(sql, values, res) {
                 handleResponse(res, 500, 'Erreur serveur')
                 reject(err)
             } else {
-                console.log('Succès')
+                console.log('Succès lastId')
                 const lastId = result.insertId
                 resolve(lastId)
             }
@@ -56,14 +56,17 @@ function getQueryLastId(sql, values, res) {
     })
 }
 function setQuery(sql, values, res) {
-    // Exécuter la requête SQL
-    executeQuery(sql, values, (err, result) => {
-        if (err) {
-            console.error('Erreur lors de l\'exécution de la requête SQL :', err)
-            return handleResponse(res, 500, 'Erreur serveur')
-        }
-        console.log('Succès')
-        return handleResponse(res, 200)
+    return new Promise((resolve, reject) => {
+        executeQuery(sql, values, (err, result) => {
+            if (err) {
+                console.error('Erreur lors de l\'exécution de la requête SQL :', err)
+                handleResponse(res, 500, 'Erreur serveur')
+                reject(err)
+            } else {
+                console.log('Succès delete')
+                resolve(result)
+            }
+        })
     })
 }
 

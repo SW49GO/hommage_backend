@@ -51,12 +51,26 @@ exports.deleteUserAccount = (req,res) =>{
 exports.deleteOneDefunct = (req,res) =>{
     const {id, idDef} = req.body
     console.log('req.body:', req.body)
+    // Delete the photo profil
+    const photoPathProfil = `./images/users/${id}`
+
+    fs.access(photoPathProfil, fs.constants.F_OK, (err) => {
+        if (err && err.code === 'ENOENT') {
+          console.error('Le dossier n\'existe pas.')
+        } 
+        const photoDefProfil = `./images/users/${id}/photodef${idDef}.jpeg`
+        fs.unlink(photoDefProfil, (err) =>{
+            if (err) {
+                console.error('Erreur lors de la suppression du fichier :', err)
+            }
+            console.log(`Le fichier a été supprimé avec succès.`)
+        })
+    })
     const filePath = `./images/photos/${idDef}`
     // Access to folder
     fs.access(filePath, fs.constants.F_OK, (err) => {
         if (err && err.code === 'ENOENT') {
           console.error('Le dossier n\'existe pas.')
-          return
         }
         fs.readdir(filePath, (err, files) => {
             if (err) {
@@ -65,8 +79,7 @@ exports.deleteOneDefunct = (req,res) =>{
             }
             // Check if there is files start with the user id
             const filesStartingWithOne = files.filter(file => file.startsWith(id))
-            console.log('filesStartingWithOne:', filesStartingWithOne)
-           
+
             if (filesStartingWithOne) { 
                 if(files.length > filesStartingWithOne.length){
                     console.log('suppr')
@@ -101,49 +114,33 @@ exports.deleteOneDefunct = (req,res) =>{
                         }
                         console.log(`Le dossier a été supprimé avec succès.`)
                     })
-                    // Delete the photo profil
-                    const photoDefProfil = `./images/users/${id}/photodef${idDef}.jpeg`
-                    fs.unlink(photoDefProfil, (err) =>{
-                        if (err) {
-                            console.error('Erreur lors de la suppression du fichier :', err)
-                            return
-                        }
-                        console.log(`Le fichier a été supprimé avec succès.`)
-                    })
                 }
             } else {
               console.log('Aucun fichier trouvé')
             }
-          })
-    
+          }) 
     })
-    
-        // // Supprimer le fichier s'il existe
-        // fs.unlink(filePath, (err) => {
-        //   if (err) {
-        //     console.error('Erreur lors de la suppression du fichier :', err);
-        //     return;
-        //   }
-        //   console.log('Le fichier a été supprimé avec succès.');
-        // })
-    
+    const sql = 'DELETE FROM defuncts WHERE user_id=? AND id=?'
+    const values1 = [id, idDef]
+    setQuery(sql, values1)
+    .then(() => {
+        console.log('1er ok')
+        const sql2 = 'DELETE FROM user_admin WHERE defunct_id=? AND user_id=?'
+        const values2 = [idDef, id]
+        return setQuery(sql2, values2)
+    })
+    .then(() => {
+        console.log('2eme ok')
+        const sql3 = 'DELETE FROM comments WHERE user_id=? AND defunct_id=?'
+        const values3 = [id, idDef]
+        return setQuery(sql3, values3)
+    })
+    .then(() => {
+        console.log('3eme ok')
+        return res.sendStatus(200)
+    })
+    .catch((err) => {
+        console.error('Une erreur est survenue :', err)
+        return res.sendStatus(500)
+    })
 }
-   /* public function deleteOneDefunct(int $defunct, int $user_id) :void{
-        $folder = 'public/pictures/users/'.$user_id;
-            if (is_dir($folder)){
-                unlink ($folder.'/photodef'.$defunct.'.jpg');
-            }
-        $data = ['defunct_id'=>$defunct, 'user_id'=>$user_id];
-        $query = "DELETE FROM comments WHERE user_id=:user_id AND defunct_id=:defunct_id";
-        $this->getQuery($query,$data);
-        $data = ['id'=>$defunct];
-        $query = "DELETE FROM defuncts WHERE id=:id";
-        $this->getQuery($query,$data);
-        $data = ['defunct_id'=>$defunct];
-        $query = "DELETE FROM user_admin WHERE defunct_id=:defunct_id";
-        $this->getQuery($query,$data);
-    }
-exports.deleteOneDefunct = (req,res) =>{
-
-}
-*/

@@ -3,7 +3,7 @@ const {getQuery} = require('../config/connect')
 exports.getUserData = (req, res) => {
     const { id } = req.body
     const sql1 = 'SELECT id, email, firstname, lastname, number_road, address, city, postal_code, pseudo, photo FROM users WHERE id=?'
-    const sql2 = 'SELECT affinity, add_share, email_share, card_real, card_virtuel, flower, new_user FROM user_admin WHERE user_id=?'
+    const sql2 = 'SELECT affinity, add_share, email_share, card_real, card_virtuel, flower FROM user_admin WHERE user_id=?'
   
     getQuery(sql1,[id], res)
     .then(result => {

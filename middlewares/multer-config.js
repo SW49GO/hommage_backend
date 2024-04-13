@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
     let uploadPath
     if(dest==='profil'){
       uploadPath = `images/users/${id}`
-      fs.mkdir(uploadPath, { recursive: true }, (err) => {
+      fs.mkdir(uploadPath, { recursive: true, mode:0o777 }, (err) => {
         if (err) {
           return callback(err)
         }
@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
     }else if (dest==='def'){
       console.log('defId',defId)
       uploadPath = `images/photos/${defId}`
-      fs.mkdir(uploadPath, { recursive: true }, (err) => {
+      fs.mkdir(uploadPath, { recursive: true, mode:0o777 }, (err) => {
         if (err) {
           return callback(err)
         }

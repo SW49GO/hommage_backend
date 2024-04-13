@@ -16,7 +16,15 @@ exports.setRegister = (req, res) => {
         const values = [firstname, lastname, email, token, pseudo,number_road,address,postal_code,city]
          // Exécuter la requête SQL
         getQueryLastId(sql, values, res)
-        .then(result => { res.json({ result, token })})
+        .then(result => { 
+            // Create folder for User
+            const folderPath = `./images/users/${result}`
+            fs.mkdir(folderPath, {mode:0o777}, (err)=>{
+                if(err){
+                    console.log('Problème de création de dossier')
+                }
+            })
+            res.json({ result, token })})
         .catch(err => {
             res.status(500).json({message:err})
         })
@@ -47,10 +55,21 @@ exports.setDefunct = (req,res)=>{
 
 // Inscription d'un administrateur utilisateur de fiche défunt
 exports.setUserAdmin = (req,res)=>{
-    const {affinity,card_virtuel,card_real,new_user,user_id,defunct_id,flower} = req.body
-    const sql = 'INSERT INTO user_admin (affinity,card_virtuel,card_real,new_user,user_id,defunct_id,flower,date_crea) VALUES (?,?,?,?,?,?,?,NOW())'
-    const values = [affinity,card_virtuel,card_real,new_user,user_id,defunct_id,flower]
-    setQuery(sql,values,res)
+    const {affinity,card_virtuel,card_real,user_id,defunct_id,flower} = req.body.data
+    const sql = 'INSERT INTO user_admin (affinity,card_virtuel,card_real,user_id,defunct_id,flower,date_crea) VALUES (?,?,?,?,?,?,NOW())'
+    const values = [affinity,card_virtuel,card_real,user_id,defunct_id,flower]
+        // Create folder for Defunct if it not already exist
+        const folderPath = `./images/photos/${defunct_id}`
+        fs.access(folderPath, fs.constants.F_OK, (err) => {
+            if (err && err.code === 'ENOENT') {
+                fs.mkdir(folderPath, {mode:0o777}, (err)=>{
+                    if(err){
+                        console.log('Problème de création de dossier')
+                    }
+                })
+            } 
+        })
+        setQuery(sql,values,res)
 }
 
 // Enregistrement d'un message envoyé via formulaire de contact
