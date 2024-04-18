@@ -33,7 +33,7 @@ function executeController(ctrlObj) {
 router.put('/register/:controller', auth, executeController(registerCtrl))
 
 router.post('/registerFile', multer,(req,res)=>{
-    console.log('bodyrequete',req.file)
+    
     if (req.file) {
         res.status(200).json({
             filename: req.file.filename,
@@ -42,7 +42,6 @@ router.post('/registerFile', multer,(req,res)=>{
     } else {
         console.log('No file uploaded')
     }
-    res.sendStatus(200)
 })
 
 router.post('/updater/:controller', auth, executeController(updaterCtrl))

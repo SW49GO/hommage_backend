@@ -2,23 +2,23 @@ const {setQuery, setQueryLastId} = require('../config/connect')
 const fs = require('fs')
 // Supprimer un commentaire
 exports.deleteComment = (req,res) =>{
-    const {id} = req.body
+    const {idComment} = req.body
     const sql = 'DELETE FROM comments WHERE id=?'
-    setQuery(sql,[id],res)
+    setQuery(sql,[idComment],res)
 }
 
-// Supprimer les commentaires lié à une photo
-exports.deleteCommentsPhoto = (req,res) =>{
-    const {photo_id} = req.body
-    const sql = 'DELETE FROM comments WHERE photo_id=?'
-    setQuery(sql,[photo_id],res)
-}
+// // Supprimer les commentaires lié à une photo
+// exports.deleteCommentsPhoto = (req,res) =>{
+//     const {photo_id} = req.body
+//     const sql = 'DELETE FROM comments WHERE photo_id=?'
+//     setQuery(sql,[photo_id],res)
+// }
 
 // Supprimer une photo de la BDD
 exports.deletePhoto = (req,res) =>{
     const {id}= req.body
     const sql = 'DELETE FROM photos WHERE id=?'
-    setQuery(sql,[id],res)
+    setQuery(sql,[id],res) 
 }
 
 // Supprimer un ami et les conversations

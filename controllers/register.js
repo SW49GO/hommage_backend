@@ -82,7 +82,9 @@ exports.setContact = (req,res)=>{
 
 // Enregistrement d'un photo de defunt
 exports.setPhotoDef = (req,res)=>{
-    const {user_id,defunct_id,name} = req.body
+    console.log('SETPHOTO')
+    const {user_id,defunct_id,name} = req.body.data
+    console.log('req.body:', req.body)
     const sql = 'INSERT INTO photos (user_id,defunct_id,name,date_crea) VALUES (?,?,?,NOW())'
     const values = [user_id,defunct_id,name]
     getQueryLastId(sql, values, res)
@@ -94,8 +96,8 @@ exports.setPhotoDef = (req,res)=>{
 
 // Enregistrement d'un commentaire
 exports.setComment = (req,res) =>{
-    const {comment,user_id,defunct_id,photo_id} = req.body
-    const sql = 'INSERT INTO comments (comment,user_id,defunct_id,photo_id,date_crea) VALUES (?,?,?,NOW())'
+    const {comment,user_id,defunct_id,photo_id} = req.body.data
+    const sql = 'INSERT INTO comments (comment,user_id,defunct_id,photo_id,date_crea) VALUES (?,?,?,?,NOW())'
     const values = [comment,user_id,defunct_id,photo_id]
     getQueryLastId(sql, values, res)
     .then(result => { res.json({ result })})

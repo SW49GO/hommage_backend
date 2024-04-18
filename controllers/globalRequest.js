@@ -4,11 +4,11 @@ const jwt = require('jsonwebtoken')
 
 exports.verifyAccount=(req,res)=>{
     const {email, password}= req.body
-    console.log('req.body:', req.body)
+    // console.log('req.body:', req.body)
     const sql = 'SELECT id, lastname, firstname, pseudo, email, password, last_log FROM users WHERE email=?'
     getQuery(sql,[email],res)
     .then(result => {
-        console.log('result:', result)
+        // console.log('result:', result)
         if (result.length > 0) {
             const user = result[0];
             bcrypt.compare(password, user.password)

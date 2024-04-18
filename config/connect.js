@@ -63,7 +63,7 @@ function setQuery(sql, values, res) {
                 handleResponse(res, 500, 'Erreur serveur')
                 reject(err)
             } else {
-                console.log('Succès delete')
+                handleResponse(res, 200, 'Requête effectuée')
                 resolve(result)
             }
         })

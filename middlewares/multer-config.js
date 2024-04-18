@@ -36,9 +36,6 @@ const storage = multer.diskStorage({
         }
         callback(null, uploadPath)
       })
-    }else if(dest==='defProfil'){
-      uploadPath = `images/users/${id}`
-      callback(null, uploadPath)
     }
     console.log('uploadPath:', uploadPath)
   },
@@ -70,9 +67,6 @@ const storage = multer.diskStorage({
     } else if(dest==='profil'){
       fileName = `photo_${id}.${extension}`
       console.log('fileName:', fileName)
-      callback(null, fileName)
-    }else if(dest==='defProfil'){
-      fileName = `photodef${defId}.${extension}`
       callback(null, fileName)
     }
   }

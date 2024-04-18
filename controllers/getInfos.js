@@ -1,9 +1,13 @@
 const {getQuery} = require('../config/connect')
 
 exports.getUserData = (req, res) => {
-    const { id } = req.body
-    const sql1 = 'SELECT id, email, firstname, lastname, number_road, address, city, postal_code, pseudo, photo FROM users WHERE id=?'
-    const sql2 = 'SELECT affinity, add_share, email_share, card_real, card_virtuel, flower FROM user_admin WHERE user_id=?'
+
+    let { id } = req.body
+    if(req.body.other){
+        id = req.body.other
+    }
+    const sql1 = 'SELECT id, email, firstname, lastname, number_road, address, city, postal_code, pseudo, photo, last_log FROM users WHERE id=?'
+    const sql2 = 'SELECT affinity, add_share, email_share, card_real, card_virtuel, flower, defunct_id FROM user_admin WHERE user_id=?'
   
     getQuery(sql1,[id], res)
     .then(result => {
@@ -70,7 +74,8 @@ exports.getDefunctList = (req, res) => {
 
  // Récupération des identités de tout les defunts
 exports.getAllDefuncts = (req,res) =>{
-    const sql = 'SELECT id, user_id, lastname, firstname, birthdate, death_date FROM defuncts ORDER BY lastname'
+    // console.log('defunctList')
+    const sql = 'SELECT id, user_id, lastname, firstname, birthdate, photo, death_date FROM defuncts ORDER BY lastname'
     getQuery(sql,[],res)
     .then(result => { res.json({ result })})
     .catch(err => {
@@ -78,21 +83,12 @@ exports.getAllDefuncts = (req,res) =>{
     })
 }
 
-// // Sélecteur de défunt
-// public function defunctSelect() :string{
-//     $select ='';
-//     $info_def = $this->getAllDefuncts();
-//     foreach($info_def as $i){
-//         $select .= '<option value="'.$i['id'].'">'.$i['lastname'].' '.$i['firstname'].' &dagger; '.$i['death_date'].'</option>';
-//     }
-//     return $select;
-// }
-
-// Récupération de la liste des commentaires liés à une photo
+// Récupération de la liste des commentaires d'un defunt
 exports.getListComment = (req,res) =>{
-    const {photo_id} = req.body
-    const sql = 'SELECT id, user_id, comment, profil_user, date_crea FROM comments WHERE photo_id=?'
-    getQuery(sql,[photo_id],res)
+    const {defunct_id} = req.body
+    // console.log('req.bodyCOMMENT:', req.body)
+    const sql = 'SELECT id, user_id, photo_id, comment, profil_user, date_crea FROM comments WHERE defunct_id=? ORDER by date_crea ASC'
+    getQuery(sql,[defunct_id],res)
     .then(result => { res.json({ result })})
     .catch(err => {
         res.status(500).json({message:err})
@@ -102,7 +98,8 @@ exports.getListComment = (req,res) =>{
 // Liste des photos liés à un defunt pour l'environnement
 exports.photoListDefunct = (req,res) =>{
     const {defunct_id} = req.body
-    const sql = 'SELECT id, user_id, name, date_crea FROM photos WHERE defunct_id=? ORDER BY id DESC'
+    // console.log('req.body:', req.body)
+    const sql = 'SELECT id, user_id, name, date_crea FROM photos WHERE defunct_id=? ORDER BY id ASC'
     getQuery(sql,[defunct_id],res)
     .then(result => { res.json({ result })})
     .catch(err => {
@@ -116,25 +113,6 @@ exports.photoDefByUser= (req,res) =>{
     const sql = 'SELECT name FROM photos WHERE user_id=? AND defunct_id=?'
     getQuery(sql,[user_id,defunct_id],res)
     .then(result => { res.json({ result })})
-    .catch(err => {
-        res.status(500).json({message:err})
-    })
-}
-
-// Affichage de la photo miniature d'un defunt
-exports.getPhotoDef = (req,res) =>{
-    const {id} = req.body
-    const sql = 'SELECT user_id, photo FROM defuncts WHERE id=?'
-    getQuery(sql,[id],res)
-    .then(result => { 
-        let pathPhoto
-        if(result[0]['photo']){
-            pathPhoto = `public/pictures/users/${result[0]['user_id']}/${result[0]['photo']}`
-        }else{
-            pathPhoto = 'public/pictures/site/noone.jpg'
-        }
-        res.json({pathPhoto})
-    })
     .catch(err => {
         res.status(500).json({message:err})
     })
@@ -295,12 +273,13 @@ exports.getRecentComments = (req,res) =>{
 // Récupération des infos d'un useradmin selon l'ID du défunt
 exports.getUserAdminInfo = (req,res) =>{
     const {defunct_id} =req.body
+    // console.log('defunct_id:', defunct_id)
     sql = 'SELECT user_id FROM user_admin WHERE defunct_id=?'
     getQuery(sql,[defunct_id],res)
     .then(result => { 
         if (result.length > 0) {
             const user_id = result[0].user_id
-            const sqlUserInfo = 'SELECT * FROM users WHERE user_id=?'
+            const sqlUserInfo = 'SELECT * FROM users WHERE id=?'
             getQuery(sqlUserInfo, [user_id], res)
             .then(userAdmin => {
                 const admin = userAdmin.length > 0 ? userAdmin[0] : null
@@ -308,7 +287,7 @@ exports.getUserAdminInfo = (req,res) =>{
             })
             .catch(err => {
                 res.status(500).json({ message: err })
-            });
+            })
         } else {
             res.json({ user_id: null, admin: null })
         }
@@ -331,9 +310,11 @@ exports.getAdminDefunct = (req,res) =>{
 
 // Liste des amis enregistrée
 exports.getFriendsList = (req,res) =>{
-    const {user_id}= req.body
+    const { id }= req.body
+    // console.log('req.bodyFRIENDS:', req.body)
+    // console.log('idFriends:', id)
     const sql = 'SELECT friend_id, user_id, date_crea, validate FROM friends WHERE user_id=? OR friend_id=?'
-    getQuery(sql,[user_id, user_id],res)
+    getQuery(sql,[id, id],res)
     .then(result => { res.json({ result })})
     .catch(err => {
         res.status(500).json({message:err})
