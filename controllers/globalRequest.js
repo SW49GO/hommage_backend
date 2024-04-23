@@ -1,4 +1,4 @@
-const {getQuery} = require('../config/connect')
+const {getQuery, setQuery} = require('../config/connect')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -33,5 +33,26 @@ exports.verifyAccount=(req,res)=>{
     })
     .catch(err => {
         res.status(500).json({message:err})
+    })
+}
+
+exports.verifyEmail=(req,res)=>{
+    const {email} =req.body
+    const sql = 'SELECT id, password FROM users WHERE email=?'
+    getQuery(sql,[email],res)
+    .then(result => { res.json({ result })})
+    .catch(err => {
+        res.status(500).json({message:err})
+    })
+}
+exports.changePass = (req, res)=>{
+    console.log('UPDATEPASS')
+    const {id, password} =req.body
+    console.log('req.body:', req.body)
+    bcrypt.hash(password, 10, function(err, hash) {
+        const password = hash
+        const sql = 'UPDATE users SET password=? WHERE id=?'
+        const values = [password, id]
+        setQuery(sql,values,res)
     })
 }

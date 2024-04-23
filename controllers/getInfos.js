@@ -3,6 +3,7 @@ const {getQuery} = require('../config/connect')
 exports.getUserData = (req, res) => {
 
     let { id } = req.body
+    console.log('req.body:', req.body)
     if(req.body.other){
         id = req.body.other
     }
@@ -17,6 +18,7 @@ exports.getUserData = (req, res) => {
             result2.forEach(item => {
                 userData.push(item)
             })
+            console.log(userData)
             res.json({ userData })
         })
         .catch(err => {
@@ -52,9 +54,10 @@ exports.getUserDefunctList = (req,res) =>{
 }
 // Récupération toutes les infos d'un défunt selon son Id
 exports.getInfoDefunct = (req,res) =>{
-    const {idDef} = req.body
+    const {defunct_id} = req.body
+    console.log('req.bodyGETINFODEF:', req.body)
     const sql = 'SELECT id, lastname, firstname, birthdate, death_date, cemetery, city_birth, city_death, postal_code, user_id, photo FROM defuncts WHERE id=?'
-    getQuery(sql,[idDef],res)
+    getQuery(sql,[defunct_id],res)
     .then(result => { res.json({ result })})
     .catch(err => {
         res.status(500).json({message:err})

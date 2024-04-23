@@ -1,4 +1,5 @@
-const {setQuery, setQueryLastId, getQuery} = require('../config/connect')
+const {setQuery, getQuery} = require('../config/connect')
+
 
 // Mise à jour de la date et heure de connexion
 exports.updateNewLogin = (req,res) =>{
@@ -41,16 +42,6 @@ exports.updateUser = (req,res) =>{
     const values = [pseudo,email,number_road,address,postal_code,city,id]
     setQuery(sql,values,res)
 }
-
-/*A FAIRE
-// Mise à jour mot de passe
-public function updatePassword(string $pass, int $id) :void{
-    $pass = password_hash($pass, PASSWORD_BCRYPT);
-    $data = ['id'=>$id, 'password'=>$pass];
-    $query = "UPDATE users SET password=:password WHERE id=:id";
-    $this->getQuery($query,$data);
-}
-*/
 
 // Mise à jour de la validation d'une demande d'ami 
 exports.updateFriend = (req,res) =>{
