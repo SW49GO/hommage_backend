@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
     if (err) {
         console.error('Erreur de connexion à la base de données :', err)
-        return;
+        return
     }
     console.log('Connecté à la base de données MySQL.')
 })
@@ -71,4 +71,5 @@ function setQuery(sql, values, res) {
 }
 
 
-module.exports = {getQuery, getQueryLastId, setQuery}
+
+module.exports = {getQuery, getQueryLastId, setQuery, handleResponse}

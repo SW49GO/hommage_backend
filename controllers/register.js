@@ -31,7 +31,7 @@ exports.setRegister = (req, res) => {
     })
 }
 
-// Inscription d'un nouvel ami'
+// Inscription d'un nouvel ami
 exports.setFriends = (req,res)=>{
     const {friend_id, user_id}=req.body
     const sql = 'INSERT INTO friends (friend_id, user_id, date_crea) VALUES (?, ?, NOW())'

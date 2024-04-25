@@ -37,7 +37,9 @@ exports.updatePhoto = (req,res) =>{
 
 // Mise à jour informations profil
 exports.updateUser = (req,res) =>{
-    const {id,pseudo,email,number_road,address,postal_code,city} = req.body
+    const {id}=req.body
+    const {pseudo,email,number_road,address,postal_code,city} = req.body.data
+    console.log('req.body:', req.body)
     const sql = 'UPDATE users SET pseudo=?, email=?,number_road=?,address=?,postal_code=?,city=? WHERE id=?'
     const values = [pseudo,email,number_road,address,postal_code,city,id]
     setQuery(sql,values,res)
